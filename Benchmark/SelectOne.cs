@@ -27,7 +27,7 @@ namespace Benchmark
         }
 
         [GlobalSetup(Target = nameof(ReadSqlClientUnmanaged))]
-        public void SetupSqlClientUnmanagerd()
+        public void SetupSqlClientUnmanaged()
         {
             AppContext.SetSwitch("Switch.Microsoft.Data.SqlClient.UseManagedNetworkingOnWindows", false);
 
