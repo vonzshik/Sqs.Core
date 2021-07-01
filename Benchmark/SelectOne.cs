@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Benchmark
 {
-    public class Select
+    public class SelectOne
     {
         const string DefaultConnectionString = "Server=.; Database=master; Integrated Security=false; User ID=sa; Password=Master1234; Connect Timeout=200; pooling='true'; Max Pool Size=200;";
 
