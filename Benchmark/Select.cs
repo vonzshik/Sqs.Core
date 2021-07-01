@@ -16,10 +16,20 @@ namespace Benchmark
         string RawQuery = string.Empty;
         SqsDB RawDB;
 
-        [GlobalSetup(Target = nameof(ReadSqlClient))]
-        public void SetupSqlClient()
+        [GlobalSetup(Target = nameof(ReadSqlClientManaged))]
+        public void SetupSqlClientManaged()
         {
-            //AppContext.SetSwitch("Switch.Microsoft.Data.SqlClient.UseManagedNetworkingOnWindows", true);
+            AppContext.SetSwitch("Switch.Microsoft.Data.SqlClient.UseManagedNetworkingOnWindows", true);
+
+            var conn = new SqlConnection(DefaultConnectionString);
+            conn.Open();
+            this.Command = new SqlCommand("SELECT 1", conn);
+        }
+
+        [GlobalSetup(Target = nameof(ReadSqlClientUnmanaged))]
+        public void SetupSqlClientUnmanagerd()
+        {
+            AppContext.SetSwitch("Switch.Microsoft.Data.SqlClient.UseManagedNetworkingOnWindows", false);
 
             var conn = new SqlConnection(DefaultConnectionString);
             conn.Open();
@@ -35,7 +45,14 @@ namespace Benchmark
         }
 
         [Benchmark]
-        public async ValueTask ReadSqlClient()
+        public async ValueTask ReadSqlClientManaged()
+        {
+            await using var reader = await this.Command.ExecuteReaderAsync();
+            await reader.ReadAsync();
+        }
+
+        [Benchmark]
+        public async ValueTask ReadSqlClientUnmanaged()
         {
             await using var reader = await this.Command.ExecuteReaderAsync();
             await reader.ReadAsync();
